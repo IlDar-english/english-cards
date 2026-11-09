@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>English Cards 🇺🇸</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%220.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctext%20y%3D%220.9em%22%20font-size%3D%2290%22%3E%F0%9F%93%9A%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#5146d8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="English Cards">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%20%22English%20Cards%22%2C%20%22short_name%22%3A%20%22English%20Cards%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23e9eaff%22%2C%20%22theme_color%22%3A%20%22%235146d8%22%2C%20%22start_url%22%3A%20%22.%22%7D">
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; padding: 20px; font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #e9eaff, #f5f0ff); color: #252746; }
+.container { max-width: 550px; margin: auto; }
+h1 { text-align: center; color: #5146d8; }
+.subtitle { text-align: center; color: #777; }
+.stats { display: flex; justify-content: space-around; background: white;
+  border-radius: 15px; padding: 15px 5px; margin: 20px 0; text-align: center; }
+.stat { font-size: 13px; }
+.stat strong { display: block; font-size: 23px; color: #5146d8; }
+.card { background: white; padding: 30px 15px; border-radius: 22px;
+  text-align: center; box-shadow: 0 5px 20px #0001; margin-bottom: 20px; }
+.badge { display: inline-block; font-size: 12px; color: #777;
+  background: #f0eeff; padding: 4px 12px; border-radius: 20px; }
+.word { font-size: 38px; font-weight: bold; margin: 25px 0; color: #292b50; }
+.word.long { font-size: 24px; line-height: 1.3; }
+.translation { font-size: 25px; color: #5146d8; margin: 20px; font-weight: bold; }
+button { border: none; border-radius: 12px; padding: 13px 17px; margin: 5px;
+  background: #5146d8; color: white; font-size: 15px; cursor: pointer; }
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.5; cursor: default; }
+.green { background: #22a06b; } .red { background: #e45b65; }
+.orange { background: #ed9b35; }
+.light { background: #e9eaff; color: #5146d8; }
+input { width: 100%; padding: 14px; margin: 7px 0; border: 1px solid #ddd;
+  border-radius: 10px; font-size: 16px; }
+.section { background: white; padding: 20px; border-radius: 18px; margin-top: 20px; }
+.hidden { display: none; }
+#message { margin-top: 15px; font-weight: bold; }
+.option { display: block; width: 100%; margin: 10px 0; background: #e9eaff; color: #292b50; }
+#speechMsg { font-size: 13px; color: #999; margin-top: 10px; min-height: 16px; }
+.wl-item { display: flex; align-items: center; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+.wl-item p { flex: 1 1 auto; margin: 0; min-width: 120px; }
+.wl-item button { margin: 2px; padding: 9px 12px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📚 English Cards 🇺🇸</h1>
+<p class="subtitle">Изучай английский каждый день!</p>
+
+<div class="stats">
+<div class="stat"><strong id="total">0</strong>Всего карточек</div>
+<div class="stat"><strong id="learned">0</strong>Выучено</div>
+<div class="stat"><strong id="review">0</strong>Повторить</div>
+</div>
+
+<div class="card">
+<div class="badge" id="typeBadge"></div>
+<p>Английское слово:</p>
+<div class="word" id="word">Apple</div>
+<div id="transcription">/ˈæp.əl/</div>
+<div class="translation hidden" id="translation">Яблоко</div>
+<br>
+<button onclick="speak()">🔊 Произношение</button>
+<button class="orange" onclick="speakSlow()">🐢 Медленно</button>
+<div id="speechMsg"></div>
+<br>
+<button class="light" onclick="showTranslation()">Показать перевод</button>
+<br><br>
+<button class="green" onclick="markLearned()">✅ Знаю</button>
+<button class="red" onclick="markReview()">🔄 Повторить</button>
+<br><br>
+<button onclick="nextCard()">Следующее слово →</button>
+</div>
+
+<div class="section">
+<h2>🧠 Проверка знаний</h2>
+<p id="question">Нажми кнопку, чтобы начать тест.</p>
+<div id="answers"></div>
+<p id="message"></p>
+</div>
+
+<div class="section">
+<h2>➕ Добавить свои слова</h2>
+<input id="english" placeholder="Английское слово или фраза">
+<input id="russian" placeholder="Перевод на русский">
+<input id="transc" placeholder="Транскрипция (необязательно — найдётся сама)">
+<button onclick="addWord()">Добавить слово</button>
+<p id="addMessage"></p>
+</div>
+
+<div class="section">
+<h2>📖 Мои слова</h2>
+<div id="wordList"></div>
+</div>
+</div>
+
+<script>
+const DICT_VERSION = 3;
+const defaultWords = [{"en": "Apple","ru": "Яблоко","tr": "/ˈæp.əl/","t": "w"},{"en": "Book","ru": "Книга","tr": "/bʊk/","t": "w"},{"en": "House","ru": "Дом","tr": "/haʊs/","t": "w"},{"en": "Water","ru": "Вода","tr": "/ˈwɑː.t̬ɚ/","t": "w"},{"en": "Beautiful","ru": "Красивый","tr": "/ˈbjuː.t̬ə.fəl/","t": "w"},{"en": "Friend","ru": "Друг","tr": "/frend/","t": "w"},{"en": "Love","ru": "Любовь","tr": "/lʌv/","t": "w"},{"en": "Family","ru": "Семья","tr": "/ˈfæm.ə.li/","t": "w"},{"en": "Work","ru": "Работа","tr": "/wɝːk/","t": "w"},{"en": "School","ru": "Школа","tr": "/skuːl/","t": "w"},{"en": "Morning","ru": "Утро","tr": "/ˈmɔːr.nɪŋ/","t": "w"},{"en": "Night","ru": "Ночь","tr": "/naɪt/","t": "w"},{"en": "Food","ru": "Еда","tr": "/fuːd/","t": "w"},{"en": "Happy","ru": "Счастливый","tr": "/ˈhæp.i/","t": "w"},{"en": "Window","ru": "Окно","tr": "/ˈwɪn.doʊ/","t": "w"},{"en": "Car","ru": "Машина","tr": "/kɑːr/","t": "w"},{"en": "City","ru": "Город","tr": "/ˈsɪt̬.i/","t": "w"},{"en": "Money","ru": "Деньги","tr": "/ˈmʌn.i/","t": "w"},{"en": "Travel","ru": "Путешествовать","tr": "/ˈtræv.əl/","t": "w"},{"en": "Knowledge","ru": "Знания","tr": "/ˈnɑː.lɪdʒ/","t": "w"},{"en": "Tree","ru": "Дерево","tr": "/triː/","t": "w"},{"en": "Sky","ru": "Небо","tr": "/skaɪ/","t": "w"},{"en": "Doctor","ru": "Врач","tr": "/ˈdɑːk.t̬ɚ/","t": "w"},{"en": "Music","ru": "Музыка","tr": "/ˈmjuː.zɪk/","t": "w"},{"en": "Question","ru": "Вопрос","tr": "/ˈkwes.tʃən/","t": "w"},{"en": "Weather","ru": "Погода","tr": "/ˈweð.ɚ/","t": "w"},{"en": "Dream","ru": "Мечта","tr": "/driːm/","t": "w"},{"en": "Health","ru": "Здоровье","tr": "/helθ/","t": "w"},{"en": "Journey","ru": "Путешествие","tr": "/ˈdʒɝː.ni/","t": "w"},{"en": "Language","ru": "Язык","tr": "/ˈlæŋ.ɡwɪdʒ/","t": "w"},{"en": "Story","ru": "История","tr": "/ˈstɔːr.i/","t": "w"},{"en": "Time","ru": "Время","tr": "/taɪm/","t": "w"},{"en": "Life","ru": "Жизнь","tr": "/laɪf/","t": "w"},{"en": "Year","ru": "Год","tr": "/jɪr/","t": "w"},{"en": "Light","ru": "Свет","tr": "/laɪt/","t": "w"},{"en": "Voice","ru": "Голос","tr": "/vɔɪs/","t": "w"},{"en": "Street","ru": "Улица","tr": "/striːt/","t": "w"},{"en": "Bread","ru": "Хлеб","tr": "/bred/","t": "w"},{"en": "Snow","ru": "Снег","tr": "/snoʊ/","t": "w"},{"en": "Rain","ru": "Дождь","tr": "/reɪn/","t": "w"},{"en": "Sea","ru": "Море","tr": "/siː/","t": "w"},{"en": "Bird","ru": "Птица","tr": "/bɝːd/","t": "w"},{"en": "Cat","ru": "Кот","tr": "/kæt/","t": "w"},{"en": "Smile","ru": "Улыбка","tr": "/smaɪl/","t": "w"},{"en": "Star","ru": "Звезда","tr": "/stɑːr/","t": "w"},{"en": "Road","ru": "Дорога","tr": "/roʊd/","t": "w"},{"en": "Garden","ru": "Сад","tr": "/ˈɡɑːr.dən/","t": "w"},{"en": "Market","ru": "Рынок","tr": "/ˈmɑːr.kɪt/","t": "w"},{"en": "Lesson","ru": "Урок","tr": "/ˈles.ən/","t": "w"},{"en": "Answer","ru": "Ответ","tr": "/ˈæn.sɚ/","t": "w"},{"en": "make a decision","ru": "Принять решение","tr": "/meɪk ə dɪˈsɪʒ.ən/","t": "p"},{"en": "keep in mind","ru": "Помнить, учитывать","tr": "/kiːp ɪn maɪnd/","t": "p"},{"en": "a piece of cake","ru": "Проще простого","tr": "/ə piːs əv keɪk/","t": "p"},{"en": "give up","ru": "Сдаваться","tr": "/ɡɪv ʌp/","t": "p"},{"en": "look after","ru": "Присматривать за","tr": "/lʊk ˈæf.tɚ/","t": "p"},{"en": "get better","ru": "Становиться лучше","tr": "/ɡet ˈbet.ɚ/","t": "p"},{"en": "on time","ru": "Вовремя","tr": "/ɑːn taɪm/","t": "p"},{"en": "take care","ru": "Береги себя","tr": "/teɪk ker/","t": "p"},{"en": "of course","ru": "Конечно","tr": "/əv kɔːrs/","t": "p"},{"en": "by the way","ru": "Кстати","tr": "/baɪ ðə weɪ/","t": "p"},{"en": "as soon as possible","ru": "Как можно скорее","tr": "/æz suːn æz ˈpɑː.sə.bəl/","t": "p"},{"en": "come up with","ru": "Придумать","tr": "/kʌm ʌp wɪð/","t": "p"},{"en": "run out of","ru": "Закончиться (о запасе)","tr": "/rʌn aʊt əv/","t": "p"},{"en": "get along with","ru": "Ладить с кем-то","tr": "/ɡet əˈlɔːŋ wɪð/","t": "p"},{"en": "pay attention","ru": "Обращать внимание","tr": "/peɪ əˈten.ʃən/","t": "p"},{"en": "feel like","ru": "Хотеть, быть в настроении","tr": "/fiːl laɪk/","t": "p"},{"en": "in the end","ru": "В конце концов","tr": "/ɪn ði end/","t": "p"},{"en": "at least","ru": "По крайней мере","tr": "/æt liːst/","t": "p"},{"en": "look forward to","ru": "С нетерпением ждать","tr": "/lʊk ˈfɔːr.wɚd tuː/","t": "p"},{"en": "break the rules","ru": "Нарушать правила","tr": "/breɪk ðə ruːlz/","t": "p"},{"en": "Practice makes perfect.","ru": "Практика ведёт к совершенству.","tr": "/ˈpræk.tɪs meɪks ˈpɝː.fɪkt/","t": "s"},{"en": "Every cloud has a silver lining.","ru": "Нет худа без добра.","tr": "/ˈev.ri klaʊd hæz ə ˈsɪl.vɚ ˈlaɪ.nɪŋ/","t": "s"},{"en": "Time is money.","ru": "Время — деньги.","tr": "/taɪm ɪz ˈmʌn.i/","t": "s"},{"en": "Actions speak louder than words.","ru": "Дела важнее слов.","tr": "/ˈæk.ʃənz spiːk ˈlaʊ.dɚ ðən wɝːdz/","t": "s"},{"en": "Better late than never.","ru": "Лучше поздно, чем никогда.","tr": "/ˈbet.ɚ leɪt ðən ˈnev.ɚ/","t": "s"},{"en": "Knowledge is power.","ru": "Знание — сила.","tr": "/ˈnɑː.lɪdʒ ɪz ˈpaʊ.ɚ/","t": "s"},{"en": "The early bird catches the worm.","ru": "Кто рано встаёт, тому Бог подаёт.","tr": "/ði ˈɝː.li bɝːd ˈkætʃ.ɪz ðə wɝːm/","t": "s"},{"en": "Where is the nearest bus stop?","ru": "Где ближайшая остановка автобуса?","tr": "/wer ɪz ðə ˈnɪr.ɪst bʌs stɑːp/","t": "s"},{"en": "How much does it cost?","ru": "Сколько это стоит?","tr": "/haʊ mʌtʃ dʌz ɪt kɔːst/","t": "s"},{"en": "Could you repeat that, please?","ru": "Повторите, пожалуйста.","tr": "/kʊd juː rɪˈpiːt ðæt pliːz/","t": "s"},{"en": "I would like to book a room.","ru": "Я хотел бы забронировать номер.","tr": "/aɪ wʊd laɪk tuː bʊk ə ruːm/","t": "s"},{"en": "What time does the train leave?","ru": "Во сколько отходит поезд?","tr": "/wʌt taɪm dʌz ðə treɪn liːv/","t": "s"},{"en": "Nice to meet you.","ru": "Приятно познакомиться.","tr": "/naɪs tuː miːt juː/","t": "s"},{"en": "See you tomorrow!","ru": "До завтра!","tr": "/siː juː təˈmɑː.roʊ/","t": "s"}];
+
+// Загрузка сохранённых данных + дозагрузка новых слов из словаря
+let words;
+try {
+    const saved = localStorage.getItem("englishWords");
+    const savedV = parseInt(localStorage.getItem("dictVersion") || "0", 10);
+    if (saved) {
+        words = JSON.parse(saved);
+        if (!Array.isArray(words)) throw new Error("bad data");
+        if (savedV !== DICT_VERSION) {
+            defaultWords.forEach(d => {
+                const exists = words.some(w =>
+                    (w.en || "").toLowerCase() === d.en.toLowerCase());
+                if (!exists) words.push(Object.assign({}, d, {status: "new"}));
+            });
+            localStorage.setItem("dictVersion", String(DICT_VERSION));
+        }
+    } else {
+        words = defaultWords.map(w => Object.assign({}, w, {status: "new"}));
+        localStorage.setItem("dictVersion", String(DICT_VERSION));
+    }
+} catch (e) {
+    words = defaultWords.map(w => Object.assign({}, w, {status: "new"}));
+}
+
+let current = 0;
+
+function save() {
+    try {
+        localStorage.setItem("englishWords", JSON.stringify(words));
+    } catch (e) {
+        console.warn("Не удалось сохранить данные:", e);
+    }
+}
+
+function typeIcon(t) { return t === "p" ? "💬 Фраза" : t === "s" ? "📖 Предложение" : "🔤 Слово"; }
+
+function updateStats() {
+    document.getElementById("total").textContent = words.length;
+    document.getElementById("learned").textContent =
+        words.filter(w => w.status === "learned").length;
+    document.getElementById("review").textContent =
+        words.filter(w => w.status === "review").length;
+    showWordList();
+}
+
+function showCard() {
+    if (!words.length) return;
+    if (current >= words.length) current = 0;
+    const w = words[current];
+    const el = document.getElementById("word");
+    el.textContent = w.en;
+    el.classList.toggle("long", w.en.length > 22);
+    const trEl = document.getElementById("transcription");
+    trEl.textContent = w.tr || "";
+    trEl.classList.toggle("hidden", !w.tr);
+    document.getElementById("translation").textContent = w.ru;
+    document.getElementById("translation").classList.add("hidden");
+    document.getElementById("typeBadge").textContent = typeIcon(w.t);
+    updateStats();
+}
+
+function showTranslation() {
+    document.getElementById("translation").classList.remove("hidden");
+}
+
+// Озвучка: небольшая задержка после cancel(), чтобы движок
+// не «проглатывал» первую гласную (проблема с Orange и т.п.)
+function speechAvailable() { return "speechSynthesis" in window; }
+
+function speechNote(text) {
+    document.getElementById("speechMsg").textContent = text;
+}
+
+function speakText(text, rate) {
+    if (!words.length) return;
+    if (!speechAvailable()) {
+        speechNote("Озвучивание недоступно в этом браузере 😕");
+        return;
+    }
+    speechNote("");
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = rate;
+    utterance.pitch = 1;
+    setTimeout(() => speechSynthesis.speak(utterance), 60);
+}
+
+function speak()     { speakText(words[current].en, 0.9); }
+function speakSlow() { speakText(words[current].en, 0.55); }
+
+function nextCard() {
+    if (!words.length) return;
+    current = (current + 1) % words.length;
+    showCard();
+}
+
+function markLearned() {
+    if (!words.length) return;
+    words[current].status = "learned";
+    words[current].correct = 0;
+    save(); nextCard();
+}
+
+function markReview() {
+    if (!words.length) return;
+    words[current].status = "review";
+    words[current].correct = 0;
+    save(); nextCard();
+}
+
+// Перемешивание Фишера–Йетса
+function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// ТЕСТ
+function startQuiz() {
+    if (words.length < 4) {
+        document.getElementById("question").textContent = "Нажми кнопку, чтобы начать тест.";
+        document.getElementById("message").textContent = "Для теста нужно минимум 4 карточки.";
+        return;
+    }
+    const ci = Math.floor(Math.random() * words.length);
+    const correct = words[ci];
+
+    // Варианты различаем по тексту перевода — дубликаты не сломают тест
+    const options = [correct];
+    const usedRu = new Set([correct.ru]);
+    let guard = 0;
+    while (options.length < 4 && guard < 200) {
+        guard++;
+        const random = words[Math.floor(Math.random() * words.length)];
+        if (!usedRu.has(random.ru)) {
+            options.push(random);
+            usedRu.add(random.ru);
+        }
+    }
+    shuffle(options);
+
+    document.getElementById("question").textContent =
+        "Как переводится: " + correct.en + "?";
+    document.getElementById("message").textContent = "";
+
+    const answers = document.getElementById("answers");
+    answers.innerHTML = "";
+
+    options.forEach(option => {
+        const button = document.createElement("button");
+        button.className = "option";
+        button.textContent = option.ru;
+        button.onclick = function () {
+            Array.from(answers.querySelectorAll("button")).forEach(b => b.disabled = true);
+            let extra = "";
+            if (option === correct) {
+                correct.correct = (correct.correct || 0) + 1;
+                if (correct.correct >= 2) {
+                    correct.status = "learned";
+                    correct.correct = 0;
+                    extra = " 🎉 Слово выучено!";
+                } else {
+                    extra = " (ещё 1 правильный ответ — и выучено)";
+                }
+                document.getElementById("message").textContent = "✅ Правильно! Молодец!" + extra;
+            } else {
+                correct.correct = 0;
+                correct.status = "review";
+                document.getElementById("message").textContent =
+                    "❌ Неправильно. Верный ответ: " + correct.ru;
+            }
+            save();
+            updateStats();
+            // Автоматически показываем следующий вопрос
+            setTimeout(() => { if (words.length >= 4) startQuiz(); },
+                document.getElementById("message").textContent.includes("выучено") ? 1800 : 1200);
+        };
+        answers.appendChild(button);
+    });
+}
+
+// Добавление слов
+function addWord() {
+    const en = document.getElementById("english").value.trim();
+    const ru = document.getElementById("russian").value.trim();
+    const trManual = document.getElementById("transc").value.trim();
+    const msgEl = document.getElementById("addMessage");
+
+    if (!en || !ru) { msgEl.textContent = "Заполни оба поля!"; return; }
+
+    const dup = words.find(w => (w.en || "").toLowerCase() === en.toLowerCase());
+    if (dup) {
+        msgEl.textContent = "Такое слово уже есть в списке!";
+        return;
+    }
+
+    const word = { en: en, ru: ru, tr: trManual, t: /[.!?]\s*$/.test(en) ? "s" : (en.includes(" ") ? "p" : "w"), status: "new" };
+    words.push(word);
+    save();
+    document.getElementById("english").value = "";
+    document.getElementById("russian").value = "";
+    document.getElementById("transc").value = "";
+    updateStats();
+
+    if (trManual) {
+        msgEl.textContent = "✅ Карточка добавлена! Транскрипция: " + trManual;
+        return;
+    }
+
+    msgEl.textContent = "✅ Карточка добавлена! Ищу транскрипцию…";
+
+    // Автопоиск транскрипции в бесплатном словаре dictionaryapi.dev
+    fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(en))
+        .then(r => (r.ok ? r.json() : Promise.reject("not found")))
+        .then(data => {
+            const entry = data && data[0];
+            let tr = (entry && entry.phonetic) || "";
+            if (!tr && entry && Array.isArray(entry.phonetics)) {
+                const p = entry.phonetics.find(x => x.text);
+                tr = p ? p.text : "";
+            }
+            if (tr) {
+                word.tr = tr;
+                save();
+                updateStats();
+                msgEl.textContent = "✅ Карточка добавлена! Транскрипция: " + tr;
+            } else {
+                msgEl.textContent = "✅ Карточка добавлена. Транскрипцию не нашёл — вписать можно вручную (✎ в списке).";
+            }
+        })
+        .catch(() => {
+            msgEl.textContent = "✅ Карточка добавлена. Транскрипцию не нашёл — вписать можно вручную (✎ в списке).";
+        });
+}
+
+// Список слов
+function showWordList() {
+    const list = document.getElementById("wordList");
+    list.innerHTML = "";
+    words.forEach((w, index) => {
+        const item = document.createElement("div");
+        item.className = "wl-item";
+
+        const p = document.createElement("p");
+        p.textContent = typeIcon(w.t).split(" ")[0] + " " + w.en + " — " + w.ru +
+            (w.tr ? " " + w.tr : "") + (w.status === "learned" ? " ✅" : "");
+        item.appendChild(p);
+
+        const edit = document.createElement("button");
+        edit.textContent = "✎";
+        edit.className = "light";
+        edit.onclick = function () {
+            const t = prompt("Транскрипция для \"" + w.en + "\":", w.tr || "");
+            if (t !== null) {
+                w.tr = t.trim();
+                save();
+                showCard();
+            }
+        };
+        item.appendChild(edit);
+
+        const del = document.createElement("button");
+        del.textContent = "Удалить";
+        del.className = "red";
+        del.onclick = function () {
+            words.splice(index, 1);
+            if (current >= words.length) current = 0;
+            save();
+            showCard();
+        };
+        item.appendChild(del);
+
+        list.appendChild(item);
+    });
+}
+
+document.getElementById("question").textContent = "Нажми кнопку, чтобы начать тест.";
+const startBtn = document.createElement("button");
+startBtn.textContent = "Начать тест";
+startBtn.onclick = startQuiz;
+document.getElementById("answers").appendChild(startBtn);
+
+showCard();
+</script>
+</body>
+</html>

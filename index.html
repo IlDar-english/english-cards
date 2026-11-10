@@ -52,7 +52,7 @@ input { width: 100%; padding: 14px; margin: 7px 0; border: 1px solid #ddd;
 <body>
 <div class="container">
 <h1>📚 English Cards 🇺🇸</h1>
-<p class="subtitle">Изучай английский каждый день!</p>
+<p class="subtitle">Изучай английский каждый день! <span style="opacity:.45;font-size:11px">v6</span></p>
 
 <div class="stats">
 <div class="stat"><strong id="total">0</strong>Всего карточек</div>
@@ -178,6 +178,21 @@ function speechNote(text) {
     document.getElementById("speechMsg").textContent = text;
 }
 
+let voiceCache = [];
+function loadVoices() {
+    voiceCache = speechSynthesis.getVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = function() { voiceCache = speechSynthesis.getVoices(); };
+    }
+}
+function pickEnglishVoice() {
+    if (!voiceCache.length) loadVoices();
+    const en = voiceCache.filter(v => /^en[-_]/i.test(v.lang));
+    if (!en.length) return null;
+    return en.find(v => v.localService)
+        || en.find(v => /samantha|daniel|alex|karen|moira|tessa|fiona/i.test(v.name))
+        || en[0];
+}
 function speakText(text, rate) {
     if (!words.length) return;
     if (!speechAvailable()) {
@@ -187,14 +202,18 @@ function speakText(text, rate) {
     speechNote("");
     speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
+    const v = pickEnglishVoice();
+    if (v) utterance.voice = v;
     utterance.lang = "en-US";
     utterance.rate = rate;
     utterance.pitch = 1;
-    setTimeout(() => speechSynthesis.speak(utterance), 60);
+    setTimeout(() => speechSynthesis.speak(utterance), 150);
 }
 
-function speak()     { speakText(words[current].en, 0.9); }
-function speakSlow() { speakText(words[current].en, 0.55); }
+loadVoices();
+
+function speak()     { speakText(words[current].en, 1.0); }
+function speakSlow() { speakText(words[current].en, 0.4); }
 
 function nextCard() {
     if (!words.length) return;
@@ -394,4 +413,3 @@ showCard();
 </script>
 </body>
 </html>
-
